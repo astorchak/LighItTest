@@ -10,10 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.user1.lightittest.Model.Product;
+import com.koushikdutta.ion.Ion;
 
 import java.util.List;
 
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private ArrayAdapter<Product> arrayAdapter;
 
     private LayoutInflater inflater;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +65,9 @@ public class MainActivity extends AppCompatActivity {
                         Product product = response.body().get(position);
                         TextView textViewProductTitle = (TextView) view.findViewById(R.id.productTitle);
                         textViewProductTitle.setText(product.getProductTitle());
+                        ImageView imageView = (ImageView) view.findViewById(R.id.imgProductsList);
+                        Ion.with(imageView)
+                                .load(ApiClient.STATIC_URL + product.getImageName());
                         return view;
                     }
                 };
