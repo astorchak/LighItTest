@@ -1,6 +1,7 @@
 package com.example.user1.lightittest;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import com.example.user1.lightittest.Model.Product;
 import com.koushikdutta.ion.Ion;
 
 import java.util.List;
+import java.util.zip.Inflater;
 
 public class ListViewAdapter extends BaseAdapter{
     private Context mContext;
@@ -64,6 +66,14 @@ public class ListViewAdapter extends BaseAdapter{
         textViewProductTitle.setText(mProducts.get(position).getProductTitle());
         Ion.with(imageView)
                 .load(ApiClient.STATIC_URL + mProducts.get(position).getImageName());
+
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, ProductActivity.class);
+                mContext.startActivity(intent);
+            }
+        });
 
         return view;
     }
