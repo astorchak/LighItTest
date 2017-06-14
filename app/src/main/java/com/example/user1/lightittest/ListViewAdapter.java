@@ -12,10 +12,14 @@ import android.widget.TextView;
 import com.example.user1.lightittest.Model.Product;
 import com.koushikdutta.ion.Ion;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.zip.Inflater;
 
 public class ListViewAdapter extends BaseAdapter{
+
+    public final static String PUT_EXTRA_PRODUCT_KEY = "Product_object";
+
     private Context mContext;
     private LayoutInflater mInflater;
     private List<Product> mProducts;
@@ -48,7 +52,7 @@ public class ListViewAdapter extends BaseAdapter{
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         final View view;
 
         if (mInflater == null) {
@@ -71,6 +75,7 @@ public class ListViewAdapter extends BaseAdapter{
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, ProductActivity.class);
+                intent.putExtra(PUT_EXTRA_PRODUCT_KEY, (Serializable) mProducts.get(position));
                 mContext.startActivity(intent);
             }
         });
