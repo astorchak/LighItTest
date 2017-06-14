@@ -30,21 +30,18 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "====================";
 
-    private ListView listView;
-
-    private ArrayAdapter<Product> arrayAdapter;
-
-    private LayoutInflater inflater;
-
+    private ListViewAdapter listViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        listView = (ListView) findViewById(R.id.lvProducts);
+        ListView listView = (ListView) findViewById(R.id.lvProducts);
 
-        inflater = this.getLayoutInflater();
+        listViewAdapter = new ListViewAdapter(MainActivity.this, null);
+
+        listView.setAdapter(listViewAdapter);
 
         getProducts();
 
@@ -58,20 +55,9 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(@NonNull Call<List<Product>> call, @NonNull final Response<List<Product>> response) {
-                arrayAdapter = new ArrayAdapter<Product>(MainActivity.this, android.R.layout.simple_list_item_1, response.body()){
-                    @Override
-                    public View getView(int position, View convertView, ViewGroup parent) {
-                        View view = inflater.inflate(R.layout.list_view_item, parent, false);
-                        Product product = response.body().get(position);
-                        TextView textViewProductTitle = (TextView) view.findViewById(R.id.productTitle);
-                        textViewProductTitle.setText(product.getProductTitle());
-                        ImageView imageView = (ImageView) view.findViewById(R.id.imgProductsList);
-                        Ion.with(imageView)
-                                .load(ApiClient.STATIC_URL + product.getImageName());
-                        return view;
-                    }
-                };
-                listView.setAdapter(arrayAdapter);
+                List<Product> list = response.body();
+                listViewAdapter.addProducts(list);
+                listViewAdapter.notifyDataSetChanged();
             }
 
             @Override
