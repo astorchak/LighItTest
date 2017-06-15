@@ -20,6 +20,10 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
 
+    public static final String SHARED_TOKEN_KEY = "shared_token_key";
+
+    public static final String MY_SHARED_PREFERENCE = "mySharedPreference";
+
     private static final String TAG = "====================";
 
     private ListViewAdapter listViewAdapter;
@@ -47,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<List<Product>>() {
             @Override
             public void onResponse(@NonNull Call<List<Product>> call, @NonNull final Response<List<Product>> response) {
+                Log.d(TAG, "afdsfdsfasdf");
                 List<Product> list = response.body();
                 listViewAdapter.addProducts(list);
                 listViewAdapter.notifyDataSetChanged();
