@@ -45,6 +45,33 @@
                         android:onClick="btnGetAccount"/>
                 </TableRow>
             </TableLayout>
+            <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/reviewLayout">
+            <TableRow>
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/editReview"
+                    android:inputType="text"/>
+            </TableRow>
+            <TableRow>
+                <RatingBar
+                    android:id="@+id/ratingBarReview"
+                    style="?android:attr/ratingBarStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:numStars="4" />
+            </TableRow>
+            <TableRow>
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Send"
+                    android:onClick="btnSendClick"/>
+            </TableRow>
+        </TableLayout>
 
             <ListView
                 android:layout_width="match_parent"

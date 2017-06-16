@@ -7,13 +7,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.example.user1.lightittest.Model.Product;
 import com.example.user1.lightittest.Model.Review;
+import com.example.user1.lightittest.Model.ReviewPostRequest;
+import com.example.user1.lightittest.Model.ReviewPostResponse;
+import com.example.user1.lightittest.Model.User;
 import com.koushikdutta.ion.Ion;
 
 import java.util.List;
@@ -36,6 +41,10 @@ public class ProductActivity extends AppCompatActivity {
     TableLayout tableLayoutLogin;
 
     private SharedPreferences sharedPreferences;
+
+    private RatingBar ratingBar;
+
+    private EditText editText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +78,13 @@ public class ProductActivity extends AppCompatActivity {
 
         boolean b = checkToken();
 
+        ratingBar = (RatingBar) findViewById(R.id.ratingBarReview);
+
+        ratingBar.setRating(5);
+        ratingBar.setNumStars(5);
+
+        editText = (EditText) findViewById(R.id.editReview);
+
 
 //        tableLayout.removeAllViews();
     }
@@ -99,8 +115,33 @@ public class ProductActivity extends AppCompatActivity {
     }
 
     private boolean checkToken(){
-        Log.d(TAG, sharedPreferences.getString(MainActivity.SHARED_TOKEN_KEY, "NOTOKEN"));
-        return sharedPreferences.getString(MainActivity.SHARED_TOKEN_KEY, "NOTOKEN") != EMPTY_TOKEN;
+        Log.d(TAG, sharedPreferences.getString(MainActivity.SHARED_TOKEN_KEY, EMPTY_TOKEN));
+        return sharedPreferences.getString(MainActivity.SHARED_TOKEN_KEY, EMPTY_TOKEN) != EMPTY_TOKEN;
+    }
+
+    public void btnSendClick(View view) {
+        ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
+
+        ReviewPostRequest reviewPostRequest = new ReviewPostRequest();
+        
+        reviewPostRequest.setText(editText.getText().toString());
+        reviewPostRequest.setRate((int) ratingBar.getRating());
+
+        Call<ReviewPostResponse> call = apiService.sendReview("Token " + sharedPreferences.getString(MainActivity.SHARED_TOKEN_KEY, EMPTY_TOKEN), reviewPostRequest, mProduct.getProductId());
+        call.enqueue(new Callback<ReviewPostResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ReviewPostResponse> call, @NonNull final Response<ReviewPostResponse> response) {
+                Log.d(TAG, "9999999999999999");
+                Log.d(TAG, String.valueOf(response.headers()));
+                Log.d(TAG, String.valueOf(response.code()));
+                Log.d(TAG, String.valueOf(response.body()));
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ReviewPostResponse> call, @NonNull Throwable t) {
+                Log.d(TAG, "Error on Failure " + t);
+            }
+        });
     }
 
 }
