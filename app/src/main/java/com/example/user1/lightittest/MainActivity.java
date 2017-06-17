@@ -1,5 +1,6 @@
 package com.example.user1.lightittest;
 
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,9 +25,13 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String MY_SHARED_PREFERENCE = "mySharedPreference";
 
-    private static final String TAG = "====================";
+    public static final String TAG = "====================";
 
     private ListViewAdapter listViewAdapter;
+
+    private SharedPreferences sharedPreferences;
+
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +43,10 @@ public class MainActivity extends AppCompatActivity {
         listViewAdapter = new ListViewAdapter(MainActivity.this, null);
 
         listView.setAdapter(listViewAdapter);
+
+        sharedPreferences = getSharedPreferences(MY_SHARED_PREFERENCE, MODE_PRIVATE);
+
+
 
         getProducts();
 
@@ -62,6 +71,34 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "Error on Failure " + t);
             }
         });
+    }
+
+//    @Override
+//    protected void onStop() {
+//        editor = sharedPreferences.edit();
+//        Log.d(TAG, "CLEAR");
+//        Log.d(TAG, sharedPreferences.getString(MainActivity.SHARED_TOKEN_KEY, ProductActivity.EMPTY_TOKEN));
+////        editor.remove(SHARED_TOKEN_KEY);
+//        editor.clear();
+//        editor.commit();
+//        Log.d(TAG, "CLEAR");
+//        Log.d(TAG, sharedPreferences.getString(MainActivity.SHARED_TOKEN_KEY, ProductActivity.EMPTY_TOKEN));
+//        super.onStop();
+//        Log.d(TAG, "MainActivity: onStop()");
+//    }
+
+    @Override
+    protected void onDestroy() {
+        editor = sharedPreferences.edit();
+        Log.d(TAG, "CLEAR");
+        Log.d(TAG, sharedPreferences.getString(MainActivity.SHARED_TOKEN_KEY, ProductActivity.EMPTY_TOKEN));
+//        editor.remove(SHARED_TOKEN_KEY);
+        editor.clear();
+        editor.commit();
+        Log.d(TAG, "CLEAR");
+        Log.d(TAG, sharedPreferences.getString(MainActivity.SHARED_TOKEN_KEY, ProductActivity.EMPTY_TOKEN));
+        super.onDestroy();
+        Log.d(TAG, "ondestroy");
     }
 }
 

@@ -2,6 +2,7 @@ package com.example.user1.lightittest;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,11 @@ import com.example.user1.lightittest.Model.Review;
 import com.koushikdutta.ion.Ion;
 
 import java.io.Serializable;
+import java.security.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class ListViewRewiewsAdapter extends BaseAdapter{
@@ -67,11 +73,31 @@ public class ListViewRewiewsAdapter extends BaseAdapter{
         TextView textViewReviewText = (TextView) view.findViewById(R.id.reviewText);
         TextView textViewReviewAuthor = (TextView) view.findViewById(R.id.reviewAuthor);
         RatingBar ratingBar = (RatingBar) view.findViewById(R.id.ratingBarListView);
+        TextView textViewDate = (TextView) view.findViewById(R.id.tvDate);
+        Log.d(MainActivity.TAG, mReviews.get(position).getReviewDateTime());
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
+        try {
+            calendar.setTime(simpleDateFormat.parse(mReviews.get(position).getReviewDateTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            Log.d(MainActivity.TAG, "error1");
+            try {
+                calendar.setTime(simpleDateFormat2.parse(mReviews.get(position).getReviewDateTime()));
+                Log.d(MainActivity.TAG, "error2");
+            } catch (ParseException e1) {
+                Log.d(MainActivity.TAG, "error3");
+                e1.printStackTrace();
+            }
+        }
 
 
         textViewReviewText.setText(mReviews.get(position).getText());
         textViewReviewAuthor.setText(mReviews.get(position).getUser().getUserName());
         ratingBar.setRating(mReviews.get(position).getRate());
+        textViewDate.setText(String.valueOf(calendar.get(Calendar.YEAR)) + "-" + String.valueOf(calendar.get(Calendar.MONTH)) + "-" +  String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)));
 
         return view;
     }

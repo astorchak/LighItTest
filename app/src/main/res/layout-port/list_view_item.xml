@@ -17,7 +17,8 @@
             android:textSize="14pt"
             android:layout_marginTop="40dp"
             android:maxLines="1"
-            android:ellipsize="end" />
+            android:ellipsize="end"
+            android:textColor="@color/colorBlack"/>
 
     </TableRow>
 </TableLayout>

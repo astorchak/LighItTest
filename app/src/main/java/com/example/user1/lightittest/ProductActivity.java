@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TableLayout;
@@ -33,7 +34,7 @@ public class ProductActivity extends AppCompatActivity {
 
     private static final String TAG = "====================";
 
-    private static final String EMPTY_TOKEN = "emptyToken";
+    public static final String EMPTY_TOKEN = "emptyToken";
 
     private Product mProduct;
 
@@ -48,6 +49,8 @@ public class ProductActivity extends AppCompatActivity {
     private EditText editText;
 
     private ListView listView;
+
+    private LinearLayout layoutReviewsInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +82,6 @@ public class ProductActivity extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences(MainActivity.MY_SHARED_PREFERENCE, MODE_PRIVATE);
 
-        boolean b = checkToken();
-
         ratingBar = (RatingBar) findViewById(R.id.ratingBarReview);
 
         ratingBar.setRating(5);
@@ -98,6 +99,10 @@ public class ProductActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        layoutReviewsInput = (LinearLayout) findViewById(R.id.layoutReviewsInput);
+
+        showSendReview();
     }
 
 
@@ -133,7 +138,14 @@ public class ProductActivity extends AppCompatActivity {
     }
 
     private void showSendReview(){
-
+        if (checkToken()){
+            tableLayoutLogin.setVisibility(View.GONE);
+            layoutReviewsInput.setVisibility(View.VISIBLE);
+        }
+        else {
+            tableLayoutLogin.setVisibility(View.VISIBLE);
+            layoutReviewsInput.setVisibility(View.GONE);
+        }
     }
 
     public void btnSendClick(View view) {
@@ -159,6 +171,11 @@ public class ProductActivity extends AppCompatActivity {
                 Log.d(TAG, "Error on Failure " + t);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        showSendReview();
     }
 
 }

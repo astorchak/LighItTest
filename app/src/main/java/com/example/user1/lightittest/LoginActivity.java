@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 
 import com.example.user1.lightittest.Model.LoginRequest;
 import com.example.user1.lightittest.Model.Review;
@@ -26,6 +27,10 @@ public class LoginActivity extends AppCompatActivity {
 
     private SharedPreferences.Editor editor;
 
+    private EditText editTextUsername;
+
+    private EditText editTextPassword;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,12 +38,16 @@ public class LoginActivity extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences(MainActivity.MY_SHARED_PREFERENCE, MODE_PRIVATE);
         editor = sharedPreferences.edit();
+
+        editTextUsername = (EditText) findViewById(R.id.editUsername);
+        editTextPassword = (EditText) findViewById(R.id.editUserPassword);
     }
 
     public void onclickSignUp(View view) {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
-        LoginRequest loginRequest = new LoginRequest("user150617", "12309856");
+        LoginRequest loginRequest = new LoginRequest(editTextUsername.getText().toString(),
+                editTextPassword.getText().toString());
 
         Call<Token> call = apiService.register(loginRequest);
         call.enqueue(new Callback<Token>() {
@@ -49,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
                     editor.commit();
                     Intent intent = new Intent();
                     setResult(RESULT_OK, intent);
+                    finish();
                 }
             }
 
@@ -78,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                     editor.commit();
                     Intent intent = new Intent();
                     setResult(RESULT_OK, intent);
-//                    finish();
+                    finish();
                 }
             }
 

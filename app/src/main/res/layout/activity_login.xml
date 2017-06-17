@@ -2,27 +2,64 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_marginTop="50dp">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="AUTHORIZATION"
+        android:textSize="14pt"
+        android:textColor="@color/colorBlack"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="username:"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:textColor="@color/colorBlack"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editUsername"/>
+        android:id="@+id/editUsername"
+        android:textColor="@color/colorBlack"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="password:"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/colorBlack"/>
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editUserPassword"/>
-    <Button
+        android:id="@+id/editUserPassword"
+        android:textColor="@color/colorBlack"/>
+
+    <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="LogIn"
-        android:id="@+id/btnLogin"
-        android:onClick="onclickLogin"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="SignUp"
-        android:id="@+id/btnSignUp"
-        android:onClick="onclickSignUp"/>
+        android:layout_height="wrap_content">
+        <TableRow>
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onclickLogin"
+                android:text="LogIn"
+                android:layout_weight="1"
+                android:background="@color/colorButtonLogin"
+                android:textColor="@color/colorWhite"/>
+
+            <Button
+                android:id="@+id/btnSignUp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="onclickSignUp"
+                android:text="SignUp"
+                android:layout_weight="1"
+                android:background="@color/colorButtonSignUp"
+                android:textColor="@color/colorWhite"/>
+        </TableRow>
+    </TableLayout>
 </LinearLayout>
 
 
