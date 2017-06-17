@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.user1.lightittest.MainActivity">
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -16,14 +15,13 @@
             <ImageView
                 android:id="@+id/singleProductImg"
                 android:layout_width="match_parent"
-                android:layout_height="420px"
+                android:layout_height="550px"
                 android:scaleType="fitXY"
-                android:fitsSystemWindows="true"
-                app:layout_collapseMode="parallax" />
+                android:fitsSystemWindows="true" />
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
+                android:textSize="20pt"
                 android:lineSpacingExtra="8dp"
                 android:id="@+id/singleProductTitle"/>
             <TextView
@@ -36,46 +34,52 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/tableLayoutLogin">
-                <TableRow>
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="LogIn/SignUp"
-                        android:id="@+id/btnLogin"
-                        android:onClick="btnGetAccount"/>
-                </TableRow>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/Login_SignUp"
+                    android:id="@+id/btnLogin"
+                    android:onClick="btnGetAccount"
+                    android:textSize="10pt"/>
             </TableLayout>
-            <TableLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/reviewLayout">
-            <TableRow>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Type your review"/>
                 <EditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/editReview"
                     android:inputType="text"/>
-            </TableRow>
-            <TableRow>
-                <RatingBar
-                    android:id="@+id/ratingBarReview"
-                    style="?android:attr/ratingBarStyle"
+                <TableLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:numStars="4" />
-            </TableRow>
-            <TableRow>
+                    android:layout_height="wrap_content">
+                    <TableRow
+                        android:gravity="center">
+                        <RatingBar
+                            android:id="@+id/ratingBarReview"
+                            style="?android:attr/ratingBarStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"/>
+                    </TableRow>
+                </TableLayout>
+
                 <Button
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Send"
+                    android:text="@string/send_button"
+                    android:textSize="10pt"
                     android:onClick="btnSendClick"/>
-            </TableRow>
-        </TableLayout>
-
+            </LinearLayout>
             <ListView
                 android:layout_width="match_parent"
-                android:layout_height="650px"
+                android:layout_height="750px"
                 android:id="@+id/lvReviews"></ListView>
         </LinearLayout>
     </ScrollView>

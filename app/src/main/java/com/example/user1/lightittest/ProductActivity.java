@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -46,6 +47,8 @@ public class ProductActivity extends AppCompatActivity {
 
     private EditText editText;
 
+    private ListView listView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +67,7 @@ public class ProductActivity extends AppCompatActivity {
         tvProductTitle.setText(mProduct.getProductTitle());
         tvProductText.setText(mProduct.getProductText());
 
-        ListView listView = (ListView) findViewById(R.id.lvReviews);
+        listView = (ListView) findViewById(R.id.lvReviews);
 
         listViewRewiewsAdapter = new ListViewRewiewsAdapter(ProductActivity.this, null);
 
@@ -85,9 +88,19 @@ public class ProductActivity extends AppCompatActivity {
 
         editText = (EditText) findViewById(R.id.editReview);
 
-
-//        tableLayout.removeAllViews();
+        /*made able to scroll listView inside scrollView*/
+        listView.setOnTouchListener(new View.OnTouchListener() {
+            // Setting on Touch Listener for handling the touch inside ScrollView
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // Disallow the touch request for parent scroll on touch of child view
+                v.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
     }
+
+
 
     private void getReviews() {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
@@ -119,11 +132,15 @@ public class ProductActivity extends AppCompatActivity {
         return sharedPreferences.getString(MainActivity.SHARED_TOKEN_KEY, EMPTY_TOKEN) != EMPTY_TOKEN;
     }
 
+    private void showSendReview(){
+
+    }
+
     public void btnSendClick(View view) {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
         ReviewPostRequest reviewPostRequest = new ReviewPostRequest();
-        
+
         reviewPostRequest.setText(editText.getText().toString());
         reviewPostRequest.setRate((int) ratingBar.getRating());
 
