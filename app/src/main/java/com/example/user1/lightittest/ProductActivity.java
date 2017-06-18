@@ -24,11 +24,9 @@ import com.example.user1.lightittest.Model.Product;
 import com.example.user1.lightittest.Model.Review;
 import com.example.user1.lightittest.Model.ReviewPostRequest;
 import com.example.user1.lightittest.Model.ReviewPostResponse;
-import com.example.user1.lightittest.Model.User;
 import com.koushikdutta.ion.Ion;
 
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,8 +36,11 @@ import retrofit2.Response;
 
 public class ProductActivity extends AppCompatActivity {
 
-    private static final String TAG = "====================";
     public static final String EMPTY_TOKEN = "emptyToken";
+    private static final String TAG = "====================";
+    private static final int ERROR_500 = 500;
+    private static final String NEED_TO_LOGIN = "Please login again to send review";
+    private static final String TOKEN_REQUEST_STRING = "Token ";
 
     private Product mProduct;
     private ListViewRewiewsAdapter listViewRewiewsAdapter;
@@ -115,19 +116,26 @@ public class ProductActivity extends AppCompatActivity {
     }
 
     private boolean checkToken(){
-        Log.d(TAG, sharedPreferences.getString(MainActivity.SHARED_TOKEN_KEY, EMPTY_TOKEN));
         return sharedPreferences.getString(MainActivity.SHARED_TOKEN_KEY, EMPTY_TOKEN) != EMPTY_TOKEN;
     }
 
-    private void showSendReview(){
+    private void isShowSendReview(){
         if (checkToken()){
-            tableLayoutLogin.setVisibility(View.GONE);
-            layoutReviewsInput.setVisibility(View.VISIBLE);
+            showSendReview();
         }
         else {
-            tableLayoutLogin.setVisibility(View.VISIBLE);
-            layoutReviewsInput.setVisibility(View.GONE);
+            showLoginButton();
         }
+    }
+
+    private void showSendReview() {
+        tableLayoutLogin.setVisibility(View.GONE);
+        layoutReviewsInput.setVisibility(View.VISIBLE);
+    }
+
+    private void showLoginButton() {
+        tableLayoutLogin.setVisibility(View.VISIBLE);
+        layoutReviewsInput.setVisibility(View.GONE);
     }
 
     public void btnSendClick(View view) {
@@ -138,28 +146,45 @@ public class ProductActivity extends AppCompatActivity {
         reviewPostRequest.setText(editText.getText().toString());
         reviewPostRequest.setRate((int) ratingBar.getRating());
 
-        Call<ReviewPostResponse> call = apiService.sendReview("Token " + sharedPreferences.getString(MainActivity.SHARED_TOKEN_KEY, EMPTY_TOKEN), reviewPostRequest, mProduct.getProductId());
+        Call<ReviewPostResponse> call = apiService.sendReview(TOKEN_REQUEST_STRING +
+                sharedPreferences.getString(MainActivity.SHARED_TOKEN_KEY, EMPTY_TOKEN),
+                reviewPostRequest, mProduct.getProductId());
         if (isInternetConnected){
             call.enqueue(new Callback<ReviewPostResponse>() {
                 @Override
-                public void onResponse(@NonNull Call<ReviewPostResponse> call, @NonNull final Response<ReviewPostResponse> response) {
+                public void onResponse(@NonNull Call<ReviewPostResponse> call,
+                                       @NonNull final Response<ReviewPostResponse> response) {
+                    if (response.code() == ERROR_500){
+                        showLoginButton();
+                        Toast.makeText(ProductActivity.this, NEED_TO_LOGIN,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                    else if (response.body() != null){
+                        getReviews();
+                    }
+                    else {
+                        Toast.makeText(ProductActivity.this, MainActivity.SERVER_ERROR_RESPONSE,
+                                Toast.LENGTH_SHORT).show();
+                    }
 
                 }
                 @Override
                 public void onFailure(@NonNull Call<ReviewPostResponse> call, @NonNull Throwable t) {
-                    Toast.makeText(ProductActivity.this, MainActivity.SERVER_ERROR_RESPONSE, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProductActivity.this, MainActivity.SERVER_ERROR_RESPONSE,
+                            Toast.LENGTH_SHORT).show();
                 }
             });
         }
         else {
-            Toast.makeText(ProductActivity.this, MainActivity.NO_INTERNET_CONNECTION, Toast.LENGTH_SHORT).show();
+            Toast.makeText(ProductActivity.this, MainActivity.NO_INTERNET_CONNECTION,
+                    Toast.LENGTH_SHORT).show();
         }
 
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        showSendReview();
+        isShowSendReview();
     }
 
     public BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -167,7 +192,7 @@ public class ProductActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             if (NetworkManager.isInternetAvailable(context)){
                 isInternetConnected = true;
-                showSendReview();
+                isShowSendReview();
                 getReviews();
             } else {
                 isInternetConnected = false;

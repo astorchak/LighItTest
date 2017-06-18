@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         listViewAdapter = new ListViewAdapter(MainActivity.this, null);
         listView.setAdapter(listViewAdapter);
-        getProducts();
     }
 
     public BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
