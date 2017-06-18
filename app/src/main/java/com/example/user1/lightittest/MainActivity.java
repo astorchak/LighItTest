@@ -13,6 +13,8 @@ import com.example.user1.lightittest.Model.Product;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -33,20 +35,21 @@ public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences.Editor editor;
 
+    @BindView(R.id.lvProducts) ListView listView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
-        ListView listView = (ListView) findViewById(R.id.lvProducts);
+//        ListView listView = (ListView) findViewById(R.id.lvProducts);
 
         listViewAdapter = new ListViewAdapter(MainActivity.this, null);
 
         listView.setAdapter(listViewAdapter);
 
         sharedPreferences = getSharedPreferences(MY_SHARED_PREFERENCE, MODE_PRIVATE);
-
-
 
         getProducts();
 
@@ -63,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "afdsfdsfasdf");
                 List<Product> list = response.body();
                 listViewAdapter.addProducts(list);
+
+//                listView.setAdapter(listViewAdapter);
+
                 listViewAdapter.notifyDataSetChanged();
             }
 
@@ -72,20 +78,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
-//    @Override
-//    protected void onStop() {
-//        editor = sharedPreferences.edit();
-//        Log.d(TAG, "CLEAR");
-//        Log.d(TAG, sharedPreferences.getString(MainActivity.SHARED_TOKEN_KEY, ProductActivity.EMPTY_TOKEN));
-////        editor.remove(SHARED_TOKEN_KEY);
-//        editor.clear();
-//        editor.commit();
-//        Log.d(TAG, "CLEAR");
-//        Log.d(TAG, sharedPreferences.getString(MainActivity.SHARED_TOKEN_KEY, ProductActivity.EMPTY_TOKEN));
-//        super.onStop();
-//        Log.d(TAG, "MainActivity: onStop()");
-//    }
 
     @Override
     protected void onDestroy() {
