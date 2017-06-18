@@ -74,7 +74,6 @@ public class ListViewRewiewsAdapter extends BaseAdapter{
         TextView textViewReviewAuthor = (TextView) view.findViewById(R.id.reviewAuthor);
         RatingBar ratingBar = (RatingBar) view.findViewById(R.id.ratingBarListView);
         TextView textViewDate = (TextView) view.findViewById(R.id.tvDate);
-        Log.d(MainActivity.TAG, mReviews.get(position).getReviewDateTime());
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         SimpleDateFormat simpleDateFormat2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -82,17 +81,12 @@ public class ListViewRewiewsAdapter extends BaseAdapter{
         try {
             calendar.setTime(simpleDateFormat.parse(mReviews.get(position).getReviewDateTime()));
         } catch (ParseException e) {
-            e.printStackTrace();
-            Log.d(MainActivity.TAG, "error1");
             try {
                 calendar.setTime(simpleDateFormat2.parse(mReviews.get(position).getReviewDateTime()));
-                Log.d(MainActivity.TAG, "error2");
             } catch (ParseException e1) {
-                Log.d(MainActivity.TAG, "error3");
                 e1.printStackTrace();
             }
         }
-
 
         textViewReviewText.setText(mReviews.get(position).getText());
         textViewReviewAuthor.setText(mReviews.get(position).getUser().getUserName());

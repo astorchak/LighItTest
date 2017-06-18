@@ -1,6 +1,9 @@
 package com.example.user1.lightittest;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +18,7 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.user1.lightittest.Model.Product;
 import com.example.user1.lightittest.Model.Review;
@@ -26,6 +30,8 @@ import com.koushikdutta.ion.Ion;
 import java.util.List;
 import java.util.Objects;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -33,61 +39,37 @@ import retrofit2.Response;
 public class ProductActivity extends AppCompatActivity {
 
     private static final String TAG = "====================";
-
     public static final String EMPTY_TOKEN = "emptyToken";
 
     private Product mProduct;
-
     private ListViewRewiewsAdapter listViewRewiewsAdapter;
-
-    TableLayout tableLayoutLogin;
-
     private SharedPreferences sharedPreferences;
+    boolean isInternetConnected;
 
-    private RatingBar ratingBar;
-
-    private EditText editText;
-
-    private ListView listView;
-
-    private LinearLayout layoutReviewsInput;
+    @BindView(R.id.singleProductImg) ImageView imageView;
+    @BindView(R.id.singleProductTitle) TextView tvProductTitle;
+    @BindView(R.id.singleProductText) TextView tvProductText;
+    @BindView(R.id.lvReviews) ListView listView;
+    @BindView(R.id.ratingBarReview) RatingBar ratingBar;
+    @BindView(R.id.editReview) EditText editText;
+    @BindView(R.id.tableLayoutLogin) TableLayout tableLayoutLogin;
+    @BindView(R.id.layoutReviewsInput) LinearLayout layoutReviewsInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product);
-
+        ButterKnife.bind(this);
         Intent intent = getIntent();
-
         mProduct = (Product) intent.getSerializableExtra(ListViewAdapter.PUT_EXTRA_PRODUCT_KEY);
-
-        ImageView imageView = (ImageView) findViewById(R.id.singleProductImg);
         Ion.with(imageView).load(ApiClient.STATIC_URL + mProduct.getImageName());
-
-        TextView tvProductTitle = (TextView) findViewById(R.id.singleProductTitle);
-        TextView tvProductText = (TextView) findViewById(R.id.singleProductText);
-
         tvProductTitle.setText(mProduct.getProductTitle());
         tvProductText.setText(mProduct.getProductText());
-
-        listView = (ListView) findViewById(R.id.lvReviews);
-
         listViewRewiewsAdapter = new ListViewRewiewsAdapter(ProductActivity.this, null);
-
         listView.setAdapter(listViewRewiewsAdapter);
-
-        getReviews();
-
-        tableLayoutLogin = (TableLayout) findViewById(R.id.tableLayoutLogin);
-
         sharedPreferences = getSharedPreferences(MainActivity.MY_SHARED_PREFERENCE, MODE_PRIVATE);
-
-        ratingBar = (RatingBar) findViewById(R.id.ratingBarReview);
-
         ratingBar.setRating(5);
         ratingBar.setNumStars(5);
-
-        editText = (EditText) findViewById(R.id.editReview);
 
         /*made able to scroll listView inside scrollView*/
         listView.setOnTouchListener(new View.OnTouchListener() {
@@ -99,10 +81,6 @@ public class ProductActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-        layoutReviewsInput = (LinearLayout) findViewById(R.id.layoutReviewsInput);
-
-        showSendReview();
     }
 
 
@@ -111,24 +89,28 @@ public class ProductActivity extends AppCompatActivity {
         ApiInterface apiService = ApiClient.getClient().create(ApiInterface.class);
 
         Call<List<Review>> call = apiService.getReviews(mProduct.getProductId());
-        call.enqueue(new Callback<List<Review>>() {
-            @Override
-            public void onResponse(@NonNull Call<List<Review>> call, @NonNull final Response<List<Review>> response) {
-                List<Review> list = response.body();
-                listViewRewiewsAdapter.addReviews(list);
-                listViewRewiewsAdapter.notifyDataSetChanged();
-            }
+        if (isInternetConnected) {
+            call.enqueue(new Callback<List<Review>>() {
+                @Override
+                public void onResponse(@NonNull Call<List<Review>> call, @NonNull final Response<List<Review>> response) {
+                    List<Review> list = response.body();
+                    listViewRewiewsAdapter.addReviews(list);
+                    listViewRewiewsAdapter.notifyDataSetChanged();
+                }
 
-            @Override
-            public void onFailure(@NonNull Call<List<Review>> call, @NonNull Throwable t) {
-                Log.d(TAG, "Error on Failure " + t);
-            }
-        });
+                @Override
+                public void onFailure(@NonNull Call<List<Review>> call, @NonNull Throwable t) {
+                    Toast.makeText(ProductActivity.this, MainActivity.SERVER_ERROR_RESPONSE, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else {
+            Toast.makeText(ProductActivity.this, MainActivity.NO_INTERNET_CONNECTION, Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void btnGetAccount(View view) {
         Intent intent = new Intent(ProductActivity.this, LoginActivity.class);
-        /*TODO check 1*/
         startActivityForResult(intent, 1);
     }
 
@@ -157,25 +139,59 @@ public class ProductActivity extends AppCompatActivity {
         reviewPostRequest.setRate((int) ratingBar.getRating());
 
         Call<ReviewPostResponse> call = apiService.sendReview("Token " + sharedPreferences.getString(MainActivity.SHARED_TOKEN_KEY, EMPTY_TOKEN), reviewPostRequest, mProduct.getProductId());
-        call.enqueue(new Callback<ReviewPostResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<ReviewPostResponse> call, @NonNull final Response<ReviewPostResponse> response) {
-                Log.d(TAG, "9999999999999999");
-                Log.d(TAG, String.valueOf(response.headers()));
-                Log.d(TAG, String.valueOf(response.code()));
-                Log.d(TAG, String.valueOf(response.body()));
-            }
+        if (isInternetConnected){
+            call.enqueue(new Callback<ReviewPostResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<ReviewPostResponse> call, @NonNull final Response<ReviewPostResponse> response) {
 
-            @Override
-            public void onFailure(@NonNull Call<ReviewPostResponse> call, @NonNull Throwable t) {
-                Log.d(TAG, "Error on Failure " + t);
-            }
-        });
+                }
+                @Override
+                public void onFailure(@NonNull Call<ReviewPostResponse> call, @NonNull Throwable t) {
+                    Toast.makeText(ProductActivity.this, MainActivity.SERVER_ERROR_RESPONSE, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        else {
+            Toast.makeText(ProductActivity.this, MainActivity.NO_INTERNET_CONNECTION, Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         showSendReview();
+    }
+
+    public BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (NetworkManager.isInternetAvailable(context)){
+                isInternetConnected = true;
+                showSendReview();
+                getReviews();
+            } else {
+                isInternetConnected = false;
+            }
+        }
+    };
+
+    private void registerInternetCheckReceiver() {
+        IntentFilter internetFilter = new IntentFilter();
+        internetFilter.addAction(MainActivity.WIFI_STATE_CHANGE);
+        internetFilter.addAction(MainActivity.CONN_CONNECTIVITY_CHANGE);
+        registerReceiver(broadcastReceiver, internetFilter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerInternetCheckReceiver();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(broadcastReceiver);
     }
 
 }
