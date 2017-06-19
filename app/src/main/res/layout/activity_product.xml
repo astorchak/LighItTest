@@ -7,7 +7,8 @@
     tools:context="com.example.user1.lightittest.MainActivity">
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -15,7 +16,7 @@
             <ImageView
                 android:id="@+id/singleProductImg"
                 android:layout_width="match_parent"
-                android:layout_height="550px"
+                android:layout_height="250dp"
                 android:scaleType="fitXY"
                 android:fitsSystemWindows="true" />
             <TextView
@@ -83,8 +84,9 @@
             </LinearLayout>
             <ListView
                 android:layout_width="match_parent"
-                android:layout_height="750px"
-                android:id="@+id/lvReviews"></ListView>
+                android:layout_height="250dp"
+                android:id="@+id/lvReviews"
+                android:nestedScrollingEnabled="true"></ListView>
         </LinearLayout>
     </ScrollView>
 
